@@ -1,20 +1,11 @@
+# Description: ALRA imputation.
+# Author: Jiaqi Zhang <jiaqi_zhang2@brown.edu>
+
 library(Matrix)
 library(SAVER)
-library(scImpute)
-source("./util/ALRA/alra.R")
+source("./DataPreparation/SimulationUtils.R")
 
-loadData <- function(data_path, data_name, sim_name) {
-  filename <- sprintf("%s/%s-%s-data_mat.csv", data_path, data_name, sim_name)
-  expr_mat <- read.csv(filename, header = 1, row.names = 1)
-  return(expr_mat)
-}
-
-loadSERGIOData <- function(data_path, data_name) {
-  filename <- sprintf("%s/%ssparsity.csv", data_path, data_name)
-  expr_mat <- read.csv(filename, header = 1, row.names = 1)
-  return(expr_mat)
-}
-
+# ======================================
 
 SAVERImpute <- function(data){
   # data: cell x gene
@@ -31,13 +22,14 @@ ALRAImpute <- function(data){
   return (data_norm_completed)
 }
 
+# ======================================
+# TODO: file path
 
+# Imputation for NORTA simulations (mouse cortex)
 if (FALSE) {
   exp_types <- c("Cortex1", "Cortex2")
   protocol_types <- c("10xChromium", "Smart_seq2")
-  # exp_types <- c("pbmc1", "pbmc2")
-  # protocol_types <- c("Drop", "inDrops")
-  num_genes <- c("50hvg", "100hvg")
+  num_genes <- c("100hvg")
   sim_name <- "NORTA"
   data_path <- "./data/simulated/new/"
   save_path <- "./data/imputed_simulation/"
@@ -47,17 +39,35 @@ if (FALSE) {
     data_name <- unlist(data_name_list[i, ])
     data_name <- sprintf("%s-%s-%s", data_name["Var1"], data_name["Var2"], data_name["Var3"])
     print(data_name)
-    data_mat <- loadData(data_path, data_name, sim_name)
-    # # -----
-    # saver_imputation <- SAVERImpute(data_mat)
-    # write.csv(saver_imputation, sprintf("%s/%s-%s-SAVER-data_mat.csv", save_path, data_name, sim_name))
+    data_mat <- loadData(sprintf("%s/%s-%s-data_mat.csv", data_path, data_name, sim_name))
     # -----
     alra_imputation <- ALRAImpute(data_mat)
     write.csv(alra_imputation, sprintf("%s/%s-%s-ALRA-data_mat.csv", save_path, data_name, sim_name))
   }
 }
 
+# Imputation for NORTA simulations (PBMC)
+if (FALSE) {
+  exp_types <- c("pbmc1", "pbmc2")
+  protocol_types <- c("Drop", "inDrops")
+  num_genes <- c("100hvg")
+  sim_name <- "NORTA"
+  data_path <- "./data/simulated/new/"
+  save_path <- "./data/imputed_simulation/"
+  data_name_list <- expand.grid(exp_types, protocol_types, num_genes)
+  # -----
+  for (i in 1:dim(data_name_list)[1]){
+    data_name <- unlist(data_name_list[i, ])
+    data_name <- sprintf("%s-%s-%s", data_name["Var1"], data_name["Var2"], data_name["Var3"])
+    print(data_name)
+    data_mat <- loadData(sprintf("%s/%s-%s-data_mat.csv", data_path, data_name, sim_name))
+    # -----
+    alra_imputation <- ALRAImpute(data_mat)
+    write.csv(alra_imputation, sprintf("%s/%s-%s-ALRA-data_mat.csv", save_path, data_name, sim_name))
+  }
+}
 
+# Imputation for SERGIO simulations
 if (FALSE) {
   sparsity_list <- c(1, 5, 10, 15, 20)
   data_path <- "./data/SERGIO_simulation_all"
@@ -67,10 +77,7 @@ if (FALSE) {
   for (s in sparsity_list){
     data_name <- sprintf("%s-%s", d, s)
     print(data_name)
-    data_mat <- loadSERGIOData(data_path, data_name)
-    # # -----
-    # saver_imputation <- SAVERImpute(data_mat)
-    # write.csv(saver_imputation, sprintf("%s/%s-SAVER-data_mat.csv", save_path, data_name))
+    data_mat <- loadData(sprintf("%s/%ssparsity.csv", data_path, data_name))
     # -----
     alra_imputation <- ALRAImpute(data_mat)
     write.csv(alra_imputation, sprintf("%s/%s-ALRA-data_mat.csv", save_path, data_name))

@@ -127,6 +127,9 @@ def findHVG(expr, num_HVG):
 #         MAIN FUNCTION
 # ===============================
 def preprocessMouseCortex():
+    '''
+    Pre-process mouse cortex data.
+    '''
     print("=" * 70)
     print("Loading data for mouse cortex...")
     expr_mat_dict, expr_stats_dict = loadMouseCortex()
@@ -145,18 +148,9 @@ def preprocessMouseCortex():
     # -----
     print("=" * 70)
     print("Find highly variable genes...")
-    hvg50_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=50) for each in qc_expr_mat_dict}
     hvg100_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=100) for each in qc_expr_mat_dict}
     hvg500_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=500) for each in qc_expr_mat_dict}
     hvg1000_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=1000) for each in qc_expr_mat_dict}
-    print("[ 50 HVGs ]")
-    hvg50_expr_stats_dict = {each: [
-        hvg50_expr_mat_dict[each].shape[0],
-        hvg50_expr_mat_dict[each].shape[1],
-        np.count_nonzero(hvg50_expr_mat_dict[each].values) / np.prod(hvg50_expr_mat_dict[each].shape),
-        np.max(hvg50_expr_mat_dict[each].values)
-    ] for each in hvg50_expr_mat_dict}
-    print(_formatStatsDict(hvg50_expr_stats_dict))
     print("[ 100 HVGs ]")
     hvg100_expr_stats_dict = {each: [
         hvg100_expr_mat_dict[each].shape[0],
@@ -181,19 +175,21 @@ def preprocessMouseCortex():
         np.max(hvg1000_expr_mat_dict[each].values)
     ] for each in hvg1000_expr_mat_dict}
     print(_formatStatsDict(hvg1000_expr_stats_dict))
-    # # -----
-    # print("=" * 70)
-    # print("Saving data...")
-    # save_path = "./experimental/mouse_cortex/processed/expr/"
-    # for each in qc_expr_mat_dict:
-    #     qc_expr_mat_dict[each].to_csv("{}/{}-full_genes.csv".format(save_path, each))
-    #     hvg50_expr_mat_dict[each].to_csv("{}/{}-50hvg.csv".format(save_path, each))
-    #     hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
-    #     hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
-    #     hvg1000_expr_mat_dict[each].to_csv("{}/{}-1000hvg.csv".format(save_path, each))
+    # -----
+    print("=" * 70)
+    print("Saving data...")
+    #TODO: path
+    save_path = "../data/experimental/"
+    for each in qc_expr_mat_dict:
+        hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
+        hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
+        hvg1000_expr_mat_dict[each].to_csv("{}/{}-1000hvg.csv".format(save_path, each))
 
 
 def preprocessPBMC():
+    '''
+    Pre-process human PBMC data.
+    '''
     print("=" * 70)
     print("Loading data for PBMC...")
     expr_mat_dict, expr_stats_dict = loadPBMC()
@@ -212,18 +208,9 @@ def preprocessPBMC():
     # -----
     print("=" * 70)
     print("Find highly variable genes...")
-    hvg50_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=50) for each in qc_expr_mat_dict}
     hvg100_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=100) for each in qc_expr_mat_dict}
     hvg500_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=500) for each in qc_expr_mat_dict}
     hvg1000_expr_mat_dict = {each: findHVG(qc_expr_mat_dict[each], num_HVG=1000) for each in qc_expr_mat_dict}
-    print("[ 50 HVGs ]")
-    hvg50_expr_stats_dict = {each: [
-        hvg50_expr_mat_dict[each].shape[0],
-        hvg50_expr_mat_dict[each].shape[1],
-        np.count_nonzero(hvg50_expr_mat_dict[each].values) / np.prod(hvg50_expr_mat_dict[each].shape),
-        np.max(hvg50_expr_mat_dict[each].values)
-    ] for each in hvg50_expr_mat_dict}
-    print(_formatStatsDict(hvg50_expr_stats_dict))
     print("[ 100 HVGs ]")
     hvg100_expr_stats_dict = {each: [
         hvg100_expr_mat_dict[each].shape[0],
@@ -248,20 +235,20 @@ def preprocessPBMC():
         np.max(hvg1000_expr_mat_dict[each].values)
     ] for each in hvg1000_expr_mat_dict}
     print(_formatStatsDict(hvg1000_expr_stats_dict))
-    # # -----
-    # print("=" * 70)
-    # print("Saving data...")
-    # save_path = "./experimental/PBMC/processed/expr"
-    # for each in qc_expr_mat_dict:
-    #     qc_expr_mat_dict[each].to_csv("{}/{}-full_genes.csv".format(save_path, each))
-    #     hvg50_expr_mat_dict[each].to_csv("{}/{}-50hvg.csv".format(save_path, each))
-    #     hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
-    #     hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
-    #     hvg1000_expr_mat_dict[each].to_csv("{}/{}-1000hvg.csv".format(save_path, each))
+    # -----
+    # TODO: path
+    print("=" * 70)
+    print("Saving data...")
+    save_path = "../data/experimental/"
+    for each in qc_expr_mat_dict:
+        hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
+        hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
+        hvg1000_expr_mat_dict[each].to_csv("{}/{}-1000hvg.csv".format(save_path, each))
 
 
 # ===============================
 
 if __name__ == '__main__':
+    #TODO: save 500hvg to high dim; save 100hvg and 1000hvg to experimental data
     preprocessMouseCortex()
     preprocessPBMC()

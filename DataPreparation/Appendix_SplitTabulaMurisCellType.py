@@ -1,3 +1,10 @@
+'''
+Description:
+    Split Tabula Muris data.
+
+Author:
+    Jiaqi Zhang <jiaqi_zhang2@brown.edu>
+'''
 import scanpy
 import numpy as np
 import pandas as pd
@@ -46,12 +53,16 @@ def readTabulaData(
 
 
 def readAnnotation(file_path):
+    # Load cell type labels
     annot_data = pd.read_csv(file_path)
     annot_data = annot_data[["cell", "cell_ontology_class", "tissue"]].reset_index(drop=True)
     return annot_data
 
 
 def getCell(annot_data, cell_type):
+    '''
+    Extract data for a certain cell type.
+    '''
     if cell_type == "T cell":
         tmp_annot_data = annot_data[annot_data.cell_ontology_class == cell_type]
         tmp_tissue = tmp_annot_data.tissue.unique()
@@ -77,6 +88,9 @@ def getCell(annot_data, cell_type):
 
 
 def preprocessing(adata):
+    '''
+    Expression matrix pre-processing: normalize by cell, log-transform, and find top 500 HVGs.
+    '''
     scanpy.pp.normalize_per_cell(  # normalize with total UMI count per cell
         adata, key_n_counts='n_counts_all'
     )
@@ -87,11 +101,10 @@ def preprocessing(adata):
     return adata
 
 
+#TODO: file path
 if __name__ == '__main__':
-    # # Split by cell type
     annot_data = readAnnotation("../../GeneNetwork-GGM/data/TabulaMuris/description/annotations_facs.csv")
     cell_type_label = ["T cell", "skeletal muscle satellite stem cell", "type B pancreatic cell"]
-    # cell_type_label = ["skeletal muscle satellite stem cell", "type B pancreatic cell"]
     for t in cell_type_label:
         tmp_t = t.replace(" ", "_")
         print("=" * 70)
