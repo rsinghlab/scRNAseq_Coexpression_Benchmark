@@ -17,7 +17,7 @@ def readTabulaData(
         must_include : str = "counts",
         num_tasks : int = None):
     """
-    Read the Tabula Muris dataset.
+    Load the Tabula Muris dataset.
 
     Args:
         path (str): Path of the directory containing original count data.
@@ -75,7 +75,7 @@ def getCell(annot_data, cell_type):
     else:
         raise ValueError("Unused cell type {}!".format(cell_type))
     # -----
-    data_path = "../../GeneNetwork-GGM/data/TabulaMuris/FACS/"
+    data_path = "../data/appendix/TabulaMuris/raw/"
     relevant_task_data = anndata.concat([
         scanpy.read_csv("{}/{}-counts.csv".format(data_path, t), first_column_names=True).T
         for t in tmp_tissue

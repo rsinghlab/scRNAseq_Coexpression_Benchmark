@@ -6,6 +6,8 @@ Author:
     Jiaqi Zhang <jiaqi_zhang2@brown.edu>
 '''
 
+import pandas as pd
+
 # ======================================
 
 def loadData(filename):

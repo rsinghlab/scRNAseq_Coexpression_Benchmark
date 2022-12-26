@@ -6,15 +6,13 @@ Description:
     The human TF list is available at:
         http://humantfs.ccbr.utoronto.ca/download.php
     The mouse TF co-expression network is available at:
-        TODO: link
+        https://www.nature.com/articles/ncomms15089 (Supplementary Data 4)
 
 Author:
     Jiaqi Zhang <jiaqi_zhang2@brown.edu>
 '''
 import pandas as pd
 import numpy as np
-
-#TODO: file path
 
 # =======================================
 def humanNetFormatConvert():
@@ -23,35 +21,38 @@ def humanNetFormatConvert():
     The csv file has already been saved, no need to run this function.
     '''
     # Load gene list
-    with open("./ChIP_seq_data/Pathway_gene_similarity_matrix_cosine.txt") as f:
+    with open("../data/experimental/reference_net/Pathway_gene_similarity_matrix_cosine.txt") as f:
         first_line = f.readline().strip('\n')
     gene_list = first_line.split("\t")
     num_cols = len(gene_list)
     gene_list = gene_list[3:]
     # Load net
-    net = pd.read_csv("./ChIP_seq_data/Pathway_gene_similarity_matrix_cosine.txt", sep="\t", skiprows=2,
+    net = pd.read_csv("../data/experimental/reference_net/Pathway_gene_similarity_matrix_cosine.txt", sep="\t", skiprows=2,
                       usecols=np.arange(3, num_cols))
     net.index = gene_list
     net.columns = gene_list
-    net.to_csv("./ChIP_seq_data/formatted_Pathway_gene_similarity_matrix_cosine.csv")
+    net.to_csv("../data/experimental/reference_net/formatted_Pathway_gene_similarity_matrix_cosine.csv")
 
 # =======================================
 
 def loadTFList():
     # Load human TF list
-    tf_list = pd.read_csv("./ChIP_seq_data/human_TF_names_v_1.01.txt", header=None, index_col=None)
+    tf_list = pd.read_csv("../data/experimental/reference_net/human_TF_names_v_1.01.txt", header=None, index_col=None)
     return tf_list.values
 
 
 def loadPathwaySimilarityNet():
     # Load human gene similarity network.
-    net = pd.read_csv("ChIP_seq_data/formatted_Pathway_gene_similarity_matrix_cosine.csv", header=0, index_col=0)
+    net = pd.read_csv("../data/experimental/reference_net/formatted_Pathway_gene_similarity_matrix_cosine.csv", header=0, index_col=0)
     return net
 
 
 def loadMouseTFNet():
     # Load mouse TF co-expression network
-    net = pd.read_excel("./ChIP_seq_data/mouse_TF_atlas_gene_coexpression.xlsx", sheet_name="PPC", header=0, index_col=0)
+    # The xlsx file downloaded from https://www.nature.com/articles/ncomms15089
+    # is named "41467_2017_BFncomms15089_MOESM3452_ESM", we rename it to "mouse_TF_atlas_gene_coexpression"
+    # out of convenience.
+    net = pd.read_excel("../data/experimental/reference_net/mouse_TF_atlas_gene_coexpression.xlsx", sheet_name="PPC", header=0, index_col=0)
     return net
 
 # =======================================
@@ -63,9 +64,9 @@ def getGeneList(data_name):
     :return: (list) Gene list.
     '''
     if "pbmc" in data_name:
-        data_dir_path = "./experimental/PBMC/processed/expr/"
+        data_dir_path = "../data/experimental/PBMC/processed/expr/"
     elif "Cortex" in data_name:
-        data_dir_path = "./experimental/mouse_cortex/processed/expr/"
+        data_dir_path = "../data/experimental/mouse_cortex/processed/expr/"
     else:
         raise ValueError("Unknown  data name {}!".format(data_name))
     with open("{}/{}-1000hvg.csv".format(data_dir_path, data_name)) as f:
@@ -81,7 +82,7 @@ def getTabulaGeneList(data_name):
     :param data_name: (str) Dataset name.
     :return: (list) Gene list.
     '''
-    data_dir_path = "./Tabula_Muris/500hvg/"
+    data_dir_path = "../data/appendix/Tabula_Muris/500hvg/"
     with open("{}/{}.csv".format(data_dir_path, data_name)) as f:
         first_line = f.readline().strip('\n').strip(",")
     gene_list = first_line.split(",")
@@ -124,7 +125,7 @@ if __name__ == '__main__':
         print(d)
         gene_list = getGeneList(d)
         _, ref_sub_net = extractSubNet(ref_net, gene_list)
-        ref_sub_net.to_csv("./ChIP_seq_data/{}-mouse_TF_PCC-sub_net_mat.csv".format(d))
+        ref_sub_net.to_csv("../data/experimental/reference_net/{}-mouse_TF_PCC-sub_net_mat.csv".format(d))
     # ----
     # Human TF similarity network
     tf_list = loadTFList()
@@ -134,7 +135,7 @@ if __name__ == '__main__':
         print(d)
         gene_list = getGeneList(d)
         _, ref_sub_net = extractSubNet(ref_net, gene_list, tf_list)
-        ref_sub_net.to_csv("./ChIP_seq_data/{}-human_TF_similarity-sub_net_mat.csv".format(d))
+        ref_sub_net.to_csv("../data/experimental/reference_net/{}-human_TF_similarity-sub_net_mat.csv".format(d))
     # ----
     # Mouse TF ATLAS net (for Tabula Muris three cell types)
     ref_net = loadMouseTFNet()
@@ -143,4 +144,4 @@ if __name__ == '__main__':
         print(d)
         gene_list = getTabulaGeneList(d)
         _, ref_sub_net = extractSubNet(ref_net, gene_list)
-        ref_sub_net.to_csv("./ChIP_seq_data/{}-mouse_TF_PCC-sub_net_mat.csv".format(d))
+        ref_sub_net.to_csv("../data/appendix/Tabula_Muris/reference_net/{}-mouse_TF_PCC-sub_net_mat.csv".format(d))

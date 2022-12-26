@@ -4,13 +4,10 @@
 suppressPackageStartupMessages({
   library(SimCorMultRes) # NORTA algorithm
   library(fitdistrplus) # distribution fitting
-  library(ZIM) # for ZIP
-  library(VGAM) # for ZINB
   library(igraph) # network visualization
   library(Matrix) # symmetric matrix
   library(Metrics)
-  library(netSmooth) # netSmooth imputation
-  source("./DtaPreparation/SimulationUtils.R")
+  source("./DataPreparation/SimulationUtils.R")
 })
 
 # ======================================
@@ -18,37 +15,10 @@ suppressPackageStartupMessages({
 # ======================================
 
 fitMarginal <- function(data, dist_name, visualize = FALSE) {
-  if (dist_name == "nbinom") {
-    fit_res <- fitdist(data, 'nbinom', start = list(mu = 1, size = 0.1), method = "mme")
-  } else if (dist_name == "zinb") {
-    fit_res <- zim(data ~ 1, control = zim.control(dist = "zinb", type = "solve")) # solve, ginv
-  } else if (dist_name == "zip") {
-    # stop("Under development...")
-    fit_res <- zim(data ~ 1, control = zim.control(dist = "zip", type = "solve")) # solve, ginv
-  } else if (dist_name == "exp") {
-    fit_res <- fitdist(data, 'exp', start = list(rate = 1), method = "mme")
-  }
+  fit_res <- fitdist(data, 'nbinom', start = list(mu = 1, size = 0.1), method = "mme")
   if (visualize) {
-    if (dist_name == "nbinom") {
-      # par(mar = c(2, 2, 2, 2))
-      par(mar = c(1, 1, 1, 1))
-      plot(fit_res)
-    } else if (dist_name == "exp") {
-      par(mar = c(0, 0, 0, 0))
-      plot(fit_res)
-    } else if (dist_name == "zinb") {
-      ecdf_func <- ecdf(data)
-      plot(sort(data), lapply(sort(data), ecdf_func))
-      x_list <- seq(from = min(data), to = max(data), length.out = 1000)
-      y_list <- lapply(x_list, function(x) { return(pzinb(x, omega = fit_res$omega[1], k = fit_res$k, lambda = fit_res$lambda[1])) })
-      lines(x_list, y_list, col = "red")
-    } else if (dist_name == "zip") {
-      ecdf_func <- ecdf(data)
-      plot(sort(data), lapply(sort(data), ecdf_func))
-      x_list <- seq(from = min(data), to = max(data), length.out = 1000)
-      y_list <- lapply(x_list, function(x) { return(pzip(x, omega = fit_res$omega[1], lambda = fit_res$lambda[1])) })
-      lines(x_list, y_list, col = "red")
-    }
+    par(mar = c(1, 1, 1, 1))
+    plot(fit_res)
   }
   return(fit_res)
 }
@@ -82,10 +52,11 @@ NORTASimulation <- function(num_cells, cov_mat, dist_list, pars_list, noise = NA
 }
 
 # ======================================
-#TODO: file path
+# NOTE: The network generated from "netSimulation" function might be non-positive-definite,
+# suth that the simulation may raise errors. You can re-run the simulation to solve this problem.
 
 # Simulate with distributions learned from mouse cortex data
-if (FALSE) {
+if (TRUE) {
   # Settings
   dist_name <- "nbinom"
   num_cells_ratio <- 1.0
@@ -96,6 +67,7 @@ if (FALSE) {
   exp_type <- "Cortex1" # Cortex1, Cortex2
   protocal_type <- "10xChromium" # 10xChromium, Smart_seq2
   num_genes <- "100hvg" # 100hvg, 500hvg
+  print(sprintf("[ %s-%s-%s ] Data simulation", exp_type, protocal_type, num_genes))
   if (num_genes == "100hvg") {
     gene_per_clust <- 10
     num_clust <- 10
@@ -145,14 +117,14 @@ if (FALSE) {
   rownames(net) <- colnames(net) <- colnames(sc_data)
   rownames(norta_simulated_data) <- paste0('cell', 1:(num_cells))
   print("Start saving data...")
-  file_name <- sprintf("./data/simulated/new/%s-%s-%s", exp_type, protocal_type, num_genes)
+  file_name <- sprintf("./data/simulation/NORTA/%s-%s-%s", exp_type, protocal_type, num_genes)
   write.csv(norta_simulated_data, sprintf("%s-NORTA-data_mat.csv", file_name))
   write.csv(net, sprintf("%s-net_mat.csv", file_name))
 }
 
 
 # Simulate with distributions learned from PBMC data
-if (FALSE) {
+if (TRUE) {
   # Settings
   dist_name <- "nbinom"
   num_cells_ratio <- 1.0
@@ -163,6 +135,7 @@ if (FALSE) {
   exp_type <- "pbmc1" # pbmc1, pbmc2
   protocal_type <- "inDrops" # Drop, inDrops
   num_genes <- "100hvg" # 100hvg, 500hvg
+  print(sprintf("[ %s-%s-%s ] Data simulation", exp_type, protocal_type, num_genes))
   if (num_genes == "100hvg") {
     gene_per_clust <- 10
     num_clust <- 10
@@ -213,7 +186,7 @@ if (FALSE) {
   rownames(net) <- colnames(net) <- colnames(sc_data)
   rownames(norta_simulated_data) <- paste0('cell', 1:(num_cells))
   print("Start saving data...")
-  file_name <- sprintf("./data/simulated/new/%s-%s-%s", exp_type, protocal_type, num_genes)
+  file_name <- sprintf("./data/simulation/NORTA/%s-%s-%s", exp_type, protocal_type, num_genes)
   write.csv(norta_simulated_data, sprintf("%s-NORTA-data_mat.csv", file_name))
   write.csv(net, sprintf("%s-net_mat.csv", file_name))
 }

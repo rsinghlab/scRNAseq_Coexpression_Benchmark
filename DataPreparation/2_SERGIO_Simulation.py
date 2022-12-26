@@ -2,22 +2,28 @@
 Description:
     SERGIO simulation.
 
+    Source codes and example data of SERGIO are available at: https://github.com/PayamDiba/SERGIO
+
+    Data used for simulation should be downloaded from the Github repo
+    (https://github.com/PayamDiba/SERGIO/tree/master/data_sets) and saved in the "SERGIO_sim_utils" directory.
+
 Author:
     Jiaqi Zhang <jiaqi_zhang2@brown.edu>
 '''
 import numpy as np
 import pandas as pd
+import sys
+sys.path.append("./SERGIO_sim_utils/")
 from SERGIO.sergio import sergio
 
 # ======================================
-#TODO: file path
 
 def SERGIOSimulate_100G():
     # Simulate clean data
     sim = sergio(number_genes=100, number_bins=9, number_sc=300, noise_params=1, decays=0.8, sampling_state=15, noise_type='dpd')
     sim.build_graph(
-        input_file_taregts='../util/SERGIO-master/data_sets/De-noised_100G_9T_300cPerT_4_DS1/Interaction_cID_4.txt',
-        input_file_regs='../util/SERGIO-master/data_sets/De-noised_100G_9T_300cPerT_4_DS1/Regs_cID_4.txt',
+        input_file_taregts='./SERGIO_sim_utils/data_sets/De-noised_100G_9T_300cPerT_4_DS1/Interaction_cID_4.txt',
+        input_file_regs='./SERGIO_sim_utils/data_sets/De-noised_100G_9T_300cPerT_4_DS1/Regs_cID_4.txt',
         shared_coop_state=2
     )
     sim.simulate()
@@ -41,12 +47,12 @@ def SERGIOSimulate_100G():
             data=count_matrix,
             index=["cell{}".format(i) for i in range(num_cells)],
             columns=["gene{}".format(i) for i in range(num_genes)]
-        ).to_csv("./SERGIO_simulation_all/100gene-9groups-{}sparsity.csv".format(sparsity_level))
+        ).to_csv("../data/simulation/SERGIO/100gene-9groups-{}sparsity.csv".format(sparsity_level))
 
 
 def constructGRN_100G():
     net_edge_idx = pd.read_csv(
-        "../util/SERGIO-master/data_sets/De-noised_100G_9T_300cPerT_4_DS1/gt_GRN.csv", header=None, index_col=None
+        "./SERGIO_sim_utils/data_sets/De-noised_100G_9T_300cPerT_4_DS1/gt_GRN.csv", header=None, index_col=None
     ).values
     net_mat = np.zeros((100, 100))
     for each in net_edge_idx:
@@ -56,7 +62,7 @@ def constructGRN_100G():
     # -----
     pd.DataFrame(
         data=net_mat,
-    ).to_csv("./SERGIO_simulation_all/100gene-true_network.csv")
+    ).to_csv("../data/simulation/SERGIO/100gene-true_network.csv")
 
 # ======================================
 
@@ -65,8 +71,8 @@ def SERGIOSimulate_400G():
     sim = sergio(number_genes=400, number_bins=9, number_sc=300, noise_params=1, decays=0.8, sampling_state=15,
                  noise_type='dpd')
     sim.build_graph(
-        input_file_taregts='../util/SERGIO-master/data_sets/De-noised_400G_9T_300cPerT_5_DS2/Interaction_cID_5.txt',
-        input_file_regs='../util/SERGIO-master/data_sets/De-noised_400G_9T_300cPerT_5_DS2/Regs_cID_5.txt',
+        input_file_taregts='./SERGIO_sim_utils/data_sets/De-noised_400G_9T_300cPerT_5_DS2/Interaction_cID_5.txt',
+        input_file_regs='./SERGIO_sim_utils/data_sets/De-noised_400G_9T_300cPerT_5_DS2/Regs_cID_5.txt',
         shared_coop_state=2
     )
     sim.simulate()
@@ -92,12 +98,12 @@ def SERGIOSimulate_400G():
             data=count_matrix,
             index=["cell{}".format(i) for i in range(num_cells)],
             columns=["gene{}".format(i) for i in range(num_genes)]
-        ).to_csv("./SERGIO_simulation_all/400gene-9groups-{}sparsity.csv".format(sparsity_level))
+        ).to_csv("../data/diff_settings/high_dim/SERGIO/400gene-9groups-{}sparsity.csv".format(sparsity_level))
 
 
 def constructGRN_400G():
     net_edge_idx = pd.read_csv(
-        "../util/SERGIO-master/data_sets/De-noised_400G_9T_300cPerT_5_DS2/gt_GRN.csv", header=None, index_col=None
+        "./SERGIO_sim_utils/data_sets/De-noised_400G_9T_300cPerT_5_DS2/gt_GRN.csv", header=None, index_col=None
     ).values
     net_mat = np.zeros((400, 400))
     for each in net_edge_idx:
@@ -107,7 +113,7 @@ def constructGRN_400G():
     # -----
     pd.DataFrame(
         data=net_mat,
-    ).to_csv("./SERGIO_simulation_all/400gene-true_network.csv")
+    ).to_csv("../data/diff_settings/high_dim/SERGIO/400gene-true_network.csv")
 
 # ======================================
 

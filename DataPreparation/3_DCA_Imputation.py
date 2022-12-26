@@ -1,12 +1,14 @@
 '''
 Description:
     DCA imputation.
+    Source codes are available at https://github.com/theislab/dca
+    Environment requirements should refer to its Github repo.
 
 Author:
     Jiaqi Zhang <jiaqi_zhang2@brown.edu>
 '''
-import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
+# import os
+# os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
 import itertools
 import pandas as pd
@@ -14,7 +16,7 @@ import numpy as np
 import scanpy
 
 import sys
-sys.path.append("../util/dca/") #TODO: dca
+sys.path.append("./DCA_src/")
 from api import *
 from SimulationUtils import loadData
 
@@ -48,8 +50,8 @@ def imputePBMCSim():
     protocol_types = ["Drop", "inDrops"]
     num_genes = ["100hvg"]
     sim_name = "NORTA"
-    data_path = "./simulated/new/"
-    save_path = "./imputed_simulation/"
+    data_path = "../data/simulation/NORTA/"
+    save_path = "../data/pre-processing/imputation/NORTA/"
     data_names = itertools.product(exp_types, protocol_types, num_genes)
     for each in data_names:
         data_name = "-".join(each)
@@ -67,8 +69,8 @@ def imputeCortexSim():
     protocol_types = ["10xChromium", "Smart_seq2"]
     num_genes = ["100hvg"]
     sim_name = "NORTA"
-    data_path = "./simulated/new/"
-    save_path = "./imputed_simulation/"
+    data_path = "../data/simulation/NORTA/"
+    save_path = "../data/pre-processing/imputation/NORTA/"
     data_names = itertools.product(exp_types, protocol_types, num_genes)
     for each in data_names:
         data_name = "-".join(each)
@@ -84,8 +86,8 @@ def imputeCortexSim():
 def imputeSERGIOSim():
     sparsity_list = [1, 5, 10, 15, 20]
     data_names = itertools.product(["100gene-9groups"], sparsity_list)
-    data_path = "./SERGIO_simulation_all"
-    save_path = "./SERGIO_imputation/"
+    data_path = "../data/simulation/SERGIO/"
+    save_path = "../data/pre-processing/imputation/SERGIO/"
     for each in data_names:
         data_name =each
         print("[ {} ]".format(data_name))
@@ -98,7 +100,6 @@ def imputeSERGIOSim():
 
 
 if __name__ == '__main__':
-    #TODO: file path
     imputePBMCSim()
     imputeCortexSim()
     imputeSERGIOSim()

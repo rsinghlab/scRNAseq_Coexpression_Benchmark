@@ -8,7 +8,12 @@ suppressPackageStartupMessages({
   library(MASS) # multivariate Gaussian
   library(matrixcalc) # for SPD check
   library(mc2d)
-  source("./DataPreparation/SimulationUtils.R") #TODO: util functions for scLink
+  source("./DataPreparation/SimulationUtils.R")
+
+  # Codes for ZI-Gaussian simulations, taken from:
+  #   https://github.com/Vivianstats/scLink/blob/master/inst/docs/scripts/simulation.R
+  files.sources <- list.files("./DataPreparation/ZIGaussian_sim_utils/pcorSimulator", full.names = TRUE)
+  sapply(files.sources, source)
 })
 
 # ======================================
@@ -18,8 +23,9 @@ suppressPackageStartupMessages({
 ZIGaussianSim <- function(net, num_cells, rho) {
   theta = net
   num_genes = length(net[1,])
-  # simulate data
-  pars = readRDS("./util/simulation/mixpara.rds")
+  # mixpara.rds contains distributions used for simulation, taken from:
+  #   https://github.com/Vivianstats/data-pkg/blob/main/scLink/mixpara.rds
+  pars = readRDS("./DataPreparation/ZIGaussian_sim_utils/mixpara.rds")
   pars = pars[complete.cases(pars),]
   pars = pars[, c("rate", "mu", "sigma")]
   pars = pars[order(pars[, "mu"], decreasing = TRUE)[1:1000],]
@@ -77,31 +83,24 @@ ZIPoissonSim <- function(net, num_cells, pi) {
 }
 
 # ======================================
-#TODO: file path
 
-if (FALSE) {
+# ZI-Gaussian simulation
+if (TRUE) {
   num_genes <- 100
   num_cells <- 2 * num_genes
-  file_name <- sprintf("./data/simulated/old/%dhvg", num_genes)
+  file_name <- sprintf("./data/simulation/ZI_Gaussian/%dhvg", num_genes)
   # -----
-  net <- read.csv(sprintf("./data/simulated/old/%dhvg-net_mat.csv", num_genes), header = 1, row.names = 1)
-  net <- as.matrix(net)
+  # Generate network
+  gene_per_clust <- 10
+  num_clust <- 10
+  num_hubs <- 5
+  hub_degree <- 2
+  num_other_edges <- 2
+  net <- netSimulation(gene_per_clust, num_clust, num_hubs, hub_degree, num_other_edges)
   net_g <- graph_from_adjacency_matrix(sign(abs(net)), mode = "undirected", diag = FALSE, weighted = TRUE)
   plot(net_g, vertex.label = NA, vertex.size = 3, edge.width = 3, main = "True Graph")
   rownames(net) <- colnames(net) <- paste0('gene', 1:(num_genes))
-  # -----
-  # ZI-Poisson simulation
-  for (pi in c(1.0, 0.9, 0.8)) {
-    zipoisson_simulated_data <- ZIPoissonSim(net, num_cells = num_cells, pi = pi)
-    print(sprintf("[pi = %f] Sparsity = %f", pi, mean(sign(zipoisson_simulated_data))))
-    par(mfrow = c(1, 2))
-    hist(zipoisson_simulated_data)
-    hist(log10(zipoisson_simulated_data + 1))
-    # Save data
-    colnames(zipoisson_simulated_data) <- paste0('gene', 1:(num_genes))
-    rownames(zipoisson_simulated_data) <- paste0('cell', 1:(num_cells))
-    write.csv(zipoisson_simulated_data, sprintf("%s-ZILGM_%.1fpi-data_mat.csv", file_name, pi))
-  }
+  write.csv(net, sprintf("./data/simulation/ZI_Gaussian/%dhvg-net_mat.csv", num_genes))
   # -----
   # Zi-Gaussian simulation
   for (rho in c(0.07, 0.1, 0.13, 0.16)) {
@@ -114,5 +113,38 @@ if (FALSE) {
     colnames(zigaussian_simulated_data) <- paste0('gene', 1:(num_genes))
     rownames(zigaussian_simulated_data) <- paste0('cell', 1:(num_cells))
     write.csv(zigaussian_simulated_data, sprintf("%s-scLink_%.2frho-data_mat.csv", file_name, rho))
+  }
+}
+
+
+# ZI-Poisson simulation
+if (TRUE) {
+  num_genes <- 100
+  num_cells <- 2 * num_genes
+  file_name <- sprintf("./data/simulation/ZI_Poisson/%dhvg", num_genes)
+  # -----
+  # Generate network
+  gene_per_clust <- 10
+  num_clust <- 10
+  num_hubs <- 5
+  hub_degree <- 2
+  num_other_edges <- 2
+  net <- netSimulation(gene_per_clust, num_clust, num_hubs, hub_degree, num_other_edges)
+  net_g <- graph_from_adjacency_matrix(sign(abs(net)), mode = "undirected", diag = FALSE, weighted = TRUE)
+  plot(net_g, vertex.label = NA, vertex.size = 3, edge.width = 3, main = "True Graph")
+  rownames(net) <- colnames(net) <- paste0('gene', 1:(num_genes))
+  write.csv(net, sprintf("./data/simulation/ZI_Poisson/%dhvg-net_mat.csv", num_genes))
+  # -----
+  # ZI-Poisson simulation
+  for (pi in c(1.0, 0.9, 0.8)) {
+    zipoisson_simulated_data <- ZIPoissonSim(net, num_cells = num_cells, pi = pi)
+    print(sprintf("[pi = %f] Sparsity = %f", pi, mean(sign(zipoisson_simulated_data))))
+    par(mfrow = c(1, 2))
+    hist(zipoisson_simulated_data)
+    hist(log10(zipoisson_simulated_data + 1))
+    # Save data
+    colnames(zipoisson_simulated_data) <- paste0('gene', 1:(num_genes))
+    rownames(zipoisson_simulated_data) <- paste0('cell', 1:(num_cells))
+    write.csv(zipoisson_simulated_data, sprintf("%s-ZILGM_%.1fpi-data_mat.csv", file_name, pi))
   }
 }

@@ -89,7 +89,6 @@ def loadPBMC():
             ]
     return expr_mat_dict, _formatStatsDict(expr_stats_dict)
 
-
 # ===============================
 #          PRE-PROCESSING
 # ===============================
@@ -121,7 +120,6 @@ def findHVG(expr, num_HVG):
     else:
         hvg_idx = np.where(hvg_idx.highly_variable.values)[0]
     return expr.iloc[:, hvg_idx]
-
 
 # ===============================
 #         MAIN FUNCTION
@@ -178,8 +176,7 @@ def preprocessMouseCortex():
     # -----
     print("=" * 70)
     print("Saving data...")
-    #TODO: path
-    save_path = "../data/experimental/"
+    save_path = "../data/experimental/mouse_cortex/processed/expr"
     for each in qc_expr_mat_dict:
         hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
         hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
@@ -236,10 +233,9 @@ def preprocessPBMC():
     ] for each in hvg1000_expr_mat_dict}
     print(_formatStatsDict(hvg1000_expr_stats_dict))
     # -----
-    # TODO: path
     print("=" * 70)
     print("Saving data...")
-    save_path = "../data/experimental/"
+    save_path = "../data/experimental/PBMC/processed/expr/"
     for each in qc_expr_mat_dict:
         hvg100_expr_mat_dict[each].to_csv("{}/{}-100hvg.csv".format(save_path, each))
         hvg500_expr_mat_dict[each].to_csv("{}/{}-500hvg.csv".format(save_path, each))
@@ -249,6 +245,5 @@ def preprocessPBMC():
 # ===============================
 
 if __name__ == '__main__':
-    #TODO: save 500hvg to high dim; save 100hvg and 1000hvg to experimental data
     preprocessMouseCortex()
     preprocessPBMC()

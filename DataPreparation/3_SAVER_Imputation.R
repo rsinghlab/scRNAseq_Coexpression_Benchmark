@@ -2,7 +2,7 @@
 # Author: Jiaqi Zhang <jiaqi_zhang2@brown.edu>
 
 library(Matrix)
-library(SAVER)
+library(SAVER) # Codes are available at https://github.com/mohuangx/SAVER
 source("./DataPreparation/SimulationUtils.R")
 
 # ======================================
@@ -14,16 +14,15 @@ SAVERImpute <- function(data){
 }
 
 # ======================================
-# TODO: file path
 
 # Imputation for NORTA simulations (mouse cortex)
-if (FALSE) {
+if (TRUE) {
   exp_types <- c("Cortex1", "Cortex2")
   protocol_types <- c("10xChromium", "Smart_seq2")
   num_genes <- c("100hvg")
   sim_name <- "NORTA"
-  data_path <- "./data/simulated/new/"
-  save_path <- "./data/imputed_simulation/"
+  data_path <- "./data/simulation/NORTA/"
+  save_path <- "./data/pre-processing/imputation/NORTA"
   data_name_list <- expand.grid(exp_types, protocol_types, num_genes)
   # -----
   for (i in 1:dim(data_name_list)[1]){
@@ -39,13 +38,13 @@ if (FALSE) {
 
 
 # Imputation for NORTA simulations (PBMC)
-if (FALSE) {
+if (TRUE) {
   exp_types <- c("pbmc1", "pbmc2")
   protocol_types <- c("Drop", "inDrops")
   num_genes <- c("100hvg")
   sim_name <- "NORTA"
-  data_path <- "./data/simulated/new/"
-  save_path <- "./data/imputed_simulation/"
+  data_path <- "./data/simulation/NORTA/"
+  save_path <- "./data/pre-processing/imputation/NORTA"
   data_name_list <- expand.grid(exp_types, protocol_types, num_genes)
   # -----
   for (i in 1:dim(data_name_list)[1]){
@@ -61,10 +60,10 @@ if (FALSE) {
 
 
 # Imputation for SERGIO simulations
-if (FALSE) {
+if (TRUE) {
   sparsity_list <- c(1, 5, 10, 15, 20)
-  data_path <- "./data/SERGIO_simulation_all"
-  save_path <- "./data/SERGIO_imputation/"
+  data_path <- "./data/simulation/SERGIO/"
+  save_path <- "./data/pre-processing/imputation/SERGIO"
   d <- "100gene-9groups"
   # -----
   for (s in sparsity_list){
