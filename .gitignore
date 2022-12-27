@@ -3,3 +3,10 @@ res/*
 *.zip
 .idea/*
 DataPreparation/SERGIO_sim_utils/data_sets/*
+Benchmark/scDesign2_src/inst/*
+*.pdf
+*.npy
+fig_res/*
+*.rda
+*.rds
+*.npy
