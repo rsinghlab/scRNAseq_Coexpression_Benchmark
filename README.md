@@ -2,11 +2,13 @@
 
 A benchmark of existing gene co-expression estimator on scRNA-seq data.
 
+**If you have questions or find any problems with our codes, feel free to submit issues or send emails to Jiaqi (jiaqi_zhang2@brown.edu).**
+
 -----
 
 ## Running Environment
 
-*Running environment configuration and package installation guides will be updated soon!*
+Please refer to [here](./installation.md) for running environment configuration and package installation guides.
 
 -----
 
@@ -22,6 +24,7 @@ Codes for data preparation are provided in the [DataPreparation](./DataPreparati
 
 Benchmark codes are provided in the [Benchmark](./Benchmark/) directory. Check [this](./Benchmark/README.md) for more details. 
 
+<!-- You can download experiment results at [here](https://drive.google.com/file/d/1WNwrXj1JnoS4H55R5rpmWboKQyAxvrXK/view?usp=sharing). It should be unzipped and put in the project root directory. -->
 
 -----
 
@@ -32,3 +35,5 @@ Codes for plotting figure in our paper are provided in the [Plotting](./Plotting
 **Experiment results of our study are available [here](https://drive.google.com/file/d/1t6SF6GXOHYJCj-pCzhyV9ZG9OZlxY81R/view?usp=sharing). It should be unzipped and put in the project root directory.**
 
 **All the figures can be dwnloaded from [here](https://drive.google.com/file/d/17JL2Gv2KIsEhtwOiuVqCHixG_DXpVumn/view?usp=sharing)**
+
+

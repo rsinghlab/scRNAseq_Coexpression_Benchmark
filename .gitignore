@@ -9,4 +9,6 @@ Benchmark/scDesign2_src/inst/*
 fig_res/*
 *.rda
 *.rds
-*.npy
+!/Test.py
+!/CombineMetric.py
+!/(DEPRECATED)README.md

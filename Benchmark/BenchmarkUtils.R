@@ -6,8 +6,8 @@ suppressPackageStartupMessages({
   library(MASS) # for covariance estimation
   library(igraph) # network plotting
   library(cvms) # for evaluation metrics
-  library(prg) # precision-recall-gain curve
-  library(zoo) # rolling means
+  # library(prg) # precision-recall-gain curve
+  # library(zoo) # rolling means
   library(argparse) # argument parsing
   library(caret) # confusion matrix
 
