@@ -2,6 +2,9 @@
 
 A benchmark of existing gene co-expression estimator on scRNA-seq data.
 
+- Our paper is published at *Journal of Machine Learning for Modeling and Computing*: https://doi.org/10.1615/JMachLearnModelComput.2023047230
+- Biorxiv version: https://doi.org/10.1101/2023.01.24.525447. 
+
 **If you have questions or find any problems with our codes, feel free to submit issues or send emails to Jiaqi (jiaqi_zhang2@brown.edu).**
 
 
